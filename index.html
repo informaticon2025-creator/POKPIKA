@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="./style/css.css">
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <title>POKPIKA</title>
+    <!-- Tailwind CSS for modern responsive UI & layout -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    <script src="./inter/js_1.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </head>
+<body class="w-screen h-screen flex flex-col justify-between cyber-grid select-none relative">
+
+    <header class="w-full px-4 py-3 glass-panel border-b border-cyan-500/30 flex justify-between items-center z-30">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-pink-500 flex items-center justify-center neon-glow-cyan">
+                <i class="fa-solid fa-gamepad text-xl text-black font-bold"></i>
+            </div>
+            <h1 class="text-xl md:text-2xl font-extrabold tracking-wider retro-font neon-text-cyan">POK<span class="text-pink-500 neon-text-pink">PIKA</span> <span class="text-xs text-cyan-300 font-sans tracking-normal bg-cyan-950 px-2 py-0.5 rounded border border-cyan-500/50">2026</span></h1>
+        </div>
+
+        <nav class="hidden md:flex space-x-6 text-sm font-semibold tracking-wide">
+            <a href="#" onclick="openModal('gamesModal')" class="hover:text-cyan-400 transition-all flex items-center space-x-1.5"><i class="fa-solid fa-rocket text-cyan-400"></i><span>MÁS JUEGOS</span></a>
+            <a id="headerShopLink" href="#" onclick="openShop()" class="header-shop-hidden hover:text-cyan-400 transition-all flex items-center space-x-1.5"><i class="fa-solid fa-store text-yellow-500"></i><span>TIENDA</span></a>
+            <a href="#" onclick="openModal('settingsModal')" class="hover:text-cyan-400 transition-all flex items-center space-x-1.5"><i class="fa-solid fa-sliders text-pink-400"></i><span>AJUSTES</span></a>
+            <a href="#" onclick="openModal('supportModal')" class="hover:text-cyan-400 transition-all flex items-center space-x-1.5"><i class="fa-solid fa-headset text-yellow-400"></i><span>SOPORTE</span></a>
+        </nav>
+        
+        <div class="flex md:hidden space-x-3">
+            <button id="headerShopButton" type="button" onclick="openShop()" class="header-shop-hidden w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-yellow-500" aria-label="Tienda"><i class="fa-solid fa-store"></i></button>
+            <button onclick="openModal('gamesModal')" class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-pink-400"><i class="fa-solid fa-rocket"></i></button>
+        </div>
+    </header>
+
+    <main class="game-main flex-1 w-full max-w-6xl mx-auto p-2 md:p-4 flex flex-col justify-center items-center relative z-20 overflow-hidden">
+        
+        <!-- Game Container Box -->
+        <div class="game-shell w-full h-full max-h-[640px] rounded-2xl glass-panel relative overflow-hidden flex flex-col shadow-2xl border border-cyan-500/40">
+            
+            <!-- Top HUD Bar inside Game -->
+            <div id="gameHud" class="hidden w-full px-4 md:px-6 py-2.5 bg-slate-950/90 border-b border-cyan-500/20 flex flex-col z-10 text-xs md:text-sm gap-2">
+              <div class="w-full flex flex-wrap justify-between items-center gap-2">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-1.5 bg-cyan-950/80 px-2.5 py-1 rounded-lg border border-cyan-500/40">
+                        <span class="text-cyan-400 font-bold uppercase">Nivel:</span>
+                        <span id="levelDisplay" class="retro-font text-cyan-300">1/40</span>
+                        <span id="levelNameDisplay" class="hidden sm:inline text-cyan-100/80"></span>
+                    </div>
+                    <div class="flex items-center space-x-1.5 bg-slate-900 px-2.5 py-1 rounded-lg border border-amber-500/40" aria-label="Tiempo restante del nivel">
+                        <i class="fa-solid fa-clock text-amber-400" aria-hidden="true"></i>
+                        <span class="text-amber-300 font-bold uppercase">Tiempo:</span>
+                        <span id="timeDisplay" class="retro-font text-amber-200">01:30</span>
+                    </div>
+                    <div id="activePowerIndicator" class="hidden items-center space-x-1 bg-purple-950 px-2.5 py-1 rounded-lg border border-purple-500 text-purple-300 font-bold">
+                        <span id="powerNameText">Poder: Rayito</span>
+                        <span id="powerTimerText" class="hidden"></span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-cyan-400 font-semibold uppercase">Puntaje:</span>
+                        <span id="scoreDisplay" class="retro-font text-cyan-300">000000</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5 bg-slate-900 px-3 py-1 rounded-full border border-pink-500/30">
+                        <i class="fa-solid fa-coins text-yellow-400 animate-pulse"></i>
+                        <span id="coinsDisplay" class="retro-font text-yellow-300 text-xs">x00</span>
+                    </div>
+                    <div class="flex items-center space-x-1" id="livesDisplay"></div>
+                    <button type="button" id="pauseBtn" onclick="pauseGame()" class="w-8 h-8 rounded-full bg-slate-900 border border-yellow-500/40 text-yellow-300 flex items-center justify-center hover:bg-slate-800 transition" aria-label="Pausar juego">
+                        <i class="fa-solid fa-pause text-xs" aria-hidden="true"></i>
+                    </button>
+                </div>
+              </div>
+              <div class="route-progress-wrap" aria-label="Avance del nivel">
+                  <span class="route-label">RUTA</span>
+                  <div id="routeProgress" class="route-track" role="progressbar" aria-label="Progreso del nivel" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                      <div class="route-centerline"></div>
+                      <i class="fa-solid fa-person-running route-player" id="routePlayer" aria-hidden="true"></i>
+                      <i class="fa-solid fa-flag-checkered route-finish" aria-hidden="true"></i>
+                  </div>
+              </div>
+            </div>
+
+            <!-- Canvas Viewport -->
+            <div class="relative flex-1 w-full bg-slate-950 overflow-hidden cursor-pointer" id="canvasContainer">
+                <canvas id="gameCanvas" class="w-full h-full block"></canvas>
+                <img id="playerSprite" class="player-sprite" src="./GIF/ZONBI.gif" alt="" aria-hidden="true">
+
+                <!-- Start Screen Overlay -->
+                <div id="startScreen" class="start-presentation absolute inset-0 z-20" role="button" tabindex="0" aria-label="Continuar al tutorial">
+                    <img class="start-pikachu" src="./GIF/pikachu_run.png" alt="" aria-hidden="true">
+                    <h2 class="retro-font text-2xl md:text-4xl text-white neon-text-cyan">POKPIKA</h2>
+                    <span class="start-prompt">Haz clic o pulsa Enter para comenzar</span>
+                    <div class="start-menu-actions">
+                        <button type="button" id="continueGameBtn" class="start-menu-button hidden" onclick="event.stopPropagation(); continueSavedGame()">
+                            <i class="fa-solid fa-play" aria-hidden="true"></i> Continuar partida
+                        </button>
+                        <button type="button" id="openShopStartBtn" class="start-menu-button" onclick="event.stopPropagation(); openShop()">
+                            <i class="fa-solid fa-store" aria-hidden="true"></i> Tienda
+                        </button>
+                    </div>
+                </div>
+
+                <div id="tutorialScreen" class="tutorial-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle">
+                    <section class="tutorial-card">
+                        <div class="tutorial-step-count" id="tutorialStepCount">PASO 1 DE 4</div>
+                        <div class="tutorial-icon" id="tutorialIcon" aria-hidden="true">
+                            <i class="fa-solid fa-flag-checkered"></i>
+                        </div>
+                        <h2 id="tutorialTitle" class="retro-font text-lg md:text-xl text-cyan-300">Tu misión</h2>
+                        <p id="tutorialText" class="tutorial-copy"></p>
+                        <div class="tutorial-actions">
+                            <button type="button" id="tutorialBackBtn" class="tutorial-back hidden">Anterior</button>
+                            <button type="button" id="tutorialNextBtn" class="tutorial-next">
+                                Siguiente <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </section>
+                </div>
+
+                <div id="pauseScreen" class="pause-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
+                    <section class="pause-card">
+                        <div id="pauseMenu">
+                            <h2 id="pauseTitle" class="retro-font text-xl text-yellow-300">PAUSA</h2>
+                            <div class="pause-actions">
+                                <button type="button" class="pause-button pause-play" onclick="resumeGame()"><i class="fa-solid fa-play" aria-hidden="true"></i> Jugar</button>
+                                <button type="button" class="pause-button pause-settings" onclick="showPauseSettings()"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Ajustes</button>
+                                <button type="button" class="pause-button pause-exit" onclick="returnToStart()"><i class="fa-solid fa-house" aria-hidden="true"></i> Salir al inicio</button>
+                            </div>
+                        </div>
+                        <div id="pauseSettings" class="hidden">
+                            <h2 class="retro-font text-lg text-yellow-300">AJUSTES</h2>
+                            <label class="pause-toggle-row" for="musicToggle">
+                                <span><i class="fa-solid fa-music" aria-hidden="true"></i> Música</span>
+                                <input id="musicToggle" type="checkbox" checked>
+                            </label>
+                            <label class="pause-volume-row" for="musicVolume">
+                                <span>Volumen música <output id="musicVolumeValue">30%</output></span>
+                                <input id="musicVolume" type="range" min="0" max="100" value="30">
+                            </label>
+                            <label class="pause-toggle-row" for="effectsToggle">
+                                <span><i class="fa-solid fa-bell" aria-hidden="true"></i> Efectos de sonido</span>
+                                <input id="effectsToggle" type="checkbox" checked>
+                            </label>
+                            <label class="pause-volume-row" for="effectsVolume">
+                                <span>Volumen de efectos <output id="effectsVolumeValue">65%</output></span>
+                                <input id="effectsVolume" type="range" min="0" max="100" value="65">
+                            </label>
+                            <button type="button" class="pause-button pause-settings" onclick="showPauseMenu()"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Volver</button>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Game Over Screen Overlay -->
+                <div id="gameOverScreen" class="absolute inset-0 bg-slate-950/95 backdrop-blur-lg flex flex-col items-center justify-center p-6 z-20 text-center hidden">
+                    <div class="w-16 h-16 mb-3 rounded-2xl bg-red-500/20 border border-red-500 flex items-center justify-center text-red-400 text-3xl">
+                        <i class="fa-solid fa-skull-crossbones"></i>
+                    </div>
+                    <h2 id="endTitle" class="retro-font text-2xl md:text-3xl text-red-400 mb-1">FIN DEL JUEGO</h2>
+                    <p id="endMessage" class="text-slate-400 text-sm mb-6">El sistema cibernético te ha alcanzado</p>
+                    
+                    <div class="bg-slate-900/90 border border-cyan-500/30 rounded-xl p-4 w-full max-w-xs mb-6 space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-400">Nivel Alcanzado:</span>
+                            <span id="finalLevel" class="retro-font text-cyan-300">1</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-400">Puntuación Final:</span>
+                            <span id="finalScore" class="retro-font text-cyan-300">0</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-400">Monedas:</span>
+                            <span id="finalCoins" class="retro-font text-yellow-300">0</span>
+                        </div>
+                    </div>
+
+                    <button onclick="startGame()" class="px-8 py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold tracking-wider hover:from-pink-400 hover:to-purple-500 transition-all neon-glow-pink shadow-lg active:scale-95 text-sm md:text-base uppercase flex items-center space-x-2">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Jugar de Nuevo</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Touch / Virtual Controller Bar for Mobile -->
+            <div id="mobileControls" class="hidden md:hidden">
+                <div id="powerTouchButtons" class="power-touch-row" aria-label="Poderes comprados">
+                    <button type="button" id="activateRayitoBtn" class="mobile-power-button hidden" aria-label="Activar Rayito">
+                        <i class="fa-solid fa-bolt" aria-hidden="true"></i><span class="power-touch-label">RAY</span><span id="rayitoInventory">0</span>
+                    </button>
+                    <button type="button" id="activateCelozBtn" class="mobile-power-button hidden" aria-label="Activar Celoz">
+                        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span class="power-touch-label">CELOZ</span><span id="celozInventory">0</span>
+                    </button>
+                    <button type="button" id="activateIceBtn" class="mobile-power-button hidden" aria-label="Activar Ice">
+                        <i class="fa-solid fa-snowflake" aria-hidden="true"></i><span class="power-touch-label">ICE</span><span id="iceInventory">0</span>
+                    </button>
+                    <button type="button" id="activateMultiBtn" class="mobile-power-button hidden" aria-label="Activar Multi">
+                        <i class="fa-solid fa-coins" aria-hidden="true"></i><span class="power-touch-label">MULTI</span><span id="multiInventory">0</span>
+                    </button>
+                </div>
+                <div class="main-touch-row">
+                    <button id="fireTouchBtn" class="flex-1 py-2.5 rounded-xl bg-pink-600 text-white font-extrabold text-xs active:bg-pink-500 neon-glow-pink flex items-center justify-center space-x-1.5">
+                    <i class="fa-solid fa-fire"></i>
+                    <span>FUEGO (A)</span>
+                </button>
+                    <button id="jumpTouchBtn" class="flex-1 py-2.5 rounded-xl bg-cyan-500 text-slate-950 font-extrabold text-xs active:bg-cyan-400 neon-glow-cyan flex items-center justify-center space-x-1.5">
+                    <i class="fa-solid fa-angles-up"></i>
+                    <span>SALTAR</span>
+                </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="w-full py-2 px-4 text-center text-xs text-slate-400 glass-panel border-t border-cyan-500/30 z-30">
+        <p>Derechos reservados &copy; 2026 - Neo Arcade Edition</p>
+    </footer>
+
+    <!-- Modals -->
+    <div id="gamesModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel w-full max-w-md rounded-2xl p-6 border border-cyan-500/50 relative">
+            <button onclick="closeModal('gamesModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="retro-font text-cyan-400 text-lg mb-4 flex items-center space-x-2">
+                <i class="fa-solid fa-rocket"></i><span>MÁS JUEGOS 2026</span>
+            </h3>
+            <div class="space-y-3">
+                <a href="https://foodrain.vercel.app/" target="_blank" rel="noopener noreferrer" class="food-rain-link p-3 rounded-xl border flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-sm">Food Rain</h4>
+                        <p class="text-xs">Abrir el juego Food Rain.</p>
+                    </div>
+                    <span class="text-xs px-2.5 py-1 rounded">Jugar <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+                </a>
+                <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-sm text-cyan-300">Cyber Runner 3D</h4>
+                        <p class="text-xs text-slate-400">Corre a través de rascacielos neon.</p>
+                    </div>
+                    <span class="text-xs px-2.5 py-1 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/30">Próximamente</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="shopModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="shopTitle">
+        <div class="glass-panel shop-card w-full max-w-lg rounded-2xl p-6 relative">
+            <button type="button" onclick="closeModal('shopModal')" class="absolute top-4 right-4 shop-close" aria-label="Cerrar tienda"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 id="shopTitle" class="retro-font shop-title text-base sm:text-lg mb-3 flex items-center gap-2"><i class="fa-solid fa-store"></i><span>TIENDA DE PODERES</span></h3>
+            <p class="shop-balance">Monedas disponibles: <strong id="shopCoins">0</strong></p>
+            <p id="shopMessage" class="shop-message" aria-live="polite"></p>
+            <div class="shop-items">
+                <article class="shop-item">
+                    <div class="shop-power-icon rayito-icon"><i class="fa-solid fa-bolt" aria-hidden="true"></i></div>
+                    <div class="shop-item-copy"><h4>Rayito</h4><p>Aumenta la velocidad durante 4 segundos.</p><small>En inventario: <span id="shopRayitoCount">0</span></small></div>
+                    <button type="button" class="shop-buy-button" onclick="buyShopPower('rayito')">20 monedas</button>
+                </article>
+                <article class="shop-item">
+                    <div class="shop-power-icon celoz-icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></div>
+                    <div class="shop-item-copy"><h4>Celoz</h4><p>Escudo amarillo: elimina monstruos al tocarlos por 5 segundos.</p><small>En inventario: <span id="shopCelozCount">0</span></small></div>
+                    <button type="button" class="shop-buy-button" onclick="buyShopPower('celoz')">30 monedas</button>
+                </article>
+                <article class="shop-item">
+                    <div class="shop-power-icon ice-icon"><i class="fa-solid fa-snowflake" aria-hidden="true"></i></div>
+                    <div class="shop-item-copy"><h4>Ice</h4><p>Congela a los monstruos móviles durante 3 segundos.</p><small>En inventario: <span id="shopIceCount">0</span></small></div>
+                    <button type="button" class="shop-buy-button" onclick="buyShopPower('ice')">25 monedas</button>
+                </article>
+                <article class="shop-item">
+                    <div class="shop-power-icon multi-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></div>
+                    <div class="shop-item-copy"><h4>Multi</h4><p>La próxima moneda recogida vale el triple.</p><small>En inventario: <span id="shopMultiCount">0</span></small></div>
+                    <button type="button" class="shop-buy-button" onclick="buyShopPower('multi')">35 monedas</button>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel w-full max-w-md rounded-2xl p-6 border border-pink-500/50 relative">
+            <button onclick="closeModal('settingsModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="retro-font text-pink-400 text-lg mb-4 flex items-center space-x-2">
+                <i class="fa-solid fa-sliders"></i><span>AJUSTES</span>
+            </h3>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div>
+                    <h4 class="font-bold text-sm">Efectos de Sonido</h4>
+                    <p class="text-xs text-slate-400">Activa o desactiva sintetizadores WebAudio</p>
+                </div>
+                <button onclick="toggleSound()" id="modalSoundToggle" class="px-4 py-1.5 rounded-lg bg-cyan-500 text-slate-950 text-xs font-bold">Activado</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="supportModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel w-full max-w-md rounded-2xl p-6 border border-yellow-500/50 relative">
+            <button onclick="closeModal('supportModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="retro-font text-yellow-400 text-lg mb-4 flex items-center space-x-2">
+                <i class="fa-solid fa-headset"></i><span>SOPORTE TÉCNICO</span>
+            </h3>
+            <div class="space-y-3 text-sm text-slate-300">
+                <p>• ESPACIO / SALTAR: Salta plataformas.</p>
+                <p>• Tecla A / Deslizar derecha: Lanza Bola de Fuego.</p>
+                <p>• Los poderes duran exactamente 20 segundos al ser recolectados.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
